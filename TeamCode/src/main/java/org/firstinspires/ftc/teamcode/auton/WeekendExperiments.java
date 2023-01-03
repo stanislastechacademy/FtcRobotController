@@ -282,6 +282,9 @@ public class WeekendExperiments extends LinearOpMode
         driveForward(2400);
         turnLeft(90);
         armDrop(3);
+        turnRight(90);
+        driveForward(800);
+        turnRight(90);
 
 //        initAutonomous();
 //        waitForStart();
