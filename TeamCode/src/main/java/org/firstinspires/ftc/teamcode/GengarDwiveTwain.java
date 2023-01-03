@@ -23,6 +23,17 @@ public class GengarDwiveTwain extends OpMode {
     private DcMotor armMotor1 = null;
     private Servo intake = null;
     double intakePosition = 0.3;
+
+    public void armMovement(int armTicks) {
+        armMotor1.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        armMotor1.setTargetPosition(armTicks);
+        armMotor1.setPower(0.5);
+        armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (armMotor1.isBusy()) {
+        }
+    }
     
     @Override
     public void init() {
@@ -64,36 +75,29 @@ public class GengarDwiveTwain extends OpMode {
         double armPower1;
 
         boolean sensitivity = gamepad1.right_bumper;
-        //boolean motorSensitivity = gamepad1.left_bumper;
-        
+        boolean armLowJunction = gamepad1.a;
+
         double x = gamepad1.left_stick_x; // 1.5;
         double y = -gamepad1.left_stick_y; // 1.5;
-        /*if (motorSensitivity == true) {
-            x = gamepad1.left_stick_x;
-            y = -gamepad1.left_stick_y;
-        }
-        */
         
         double rightX = gamepad1.right_stick_x;
         double r = Math.hypot(x, y);
         double robotAngle = Math.atan2(y, x) - Math.PI / 4;
         double leftTrigger = gamepad2.left_trigger;
         double rightTrigger = gamepad2.right_trigger;
-        //boolean leftBumper2 = gamepad1.dpad_down;
-        //boolean rightBumper2 = gamepad1.dpad_up;
-        
-        if (sensitivity == true) {
+
+        if (armLowJunction) {
+            armMovement(1800);
+        }
+        if (sensitivity) {
             rightX = gamepad1.right_stick_x / 2;
         }
-        
         if (gamepad2.dpad_down) {
             intakePosition = 0.3;
         }
         if (gamepad2.dpad_up) {
             intakePosition = 0.5;
         }
-        
-        
         leftFrontPower = (r * Math.cos(robotAngle) + rightX);
         rightFrontPower = (r * Math.sin(robotAngle) - rightX);
         leftBackPower = (r * Math.sin(robotAngle) + rightX);

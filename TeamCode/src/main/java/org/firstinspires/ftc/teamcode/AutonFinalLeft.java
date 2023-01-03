@@ -52,7 +52,7 @@ public class AutonFinalLeft extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
-        //servo dicht
+        //servo closed
         intakeServo.setPosition(0.3);
         //forward
         leftBack.setMode(DcMotor.RunMode.RESET_ENCODERS);
