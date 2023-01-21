@@ -1,46 +1,43 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
-
-@Autonomous(name = "IgorRoadrunner", group = "Concept")
-public class IgorRoadrunner extends LinearOpMode{
-
+public class DefaultFunctions {
     private DcMotor leftBack;
     private DcMotor leftFront;
     private DcMotor rightBack;
     private DcMotor rightFront;
-    private DcMotor armMotor;
+    private DcMotor armMotor1;
+    private DcMotor armMotor2;
     private Servo intakeServo;
+    private LinearOpMode opmode;
+
     int currentHeight = 0;
 
-    private DefaultFunctions defaultFunctions;
 
-    public void initAutonomous() {
-
-
+    public void initAutonomous(HardwareMap hardwareMap, LinearOpMode opmode) {
+        this.opmode = opmode;
 
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        armMotor = hardwareMap.get(DcMotor.class, "armmotor1");
+        armMotor1 = hardwareMap.get(DcMotor.class, "armmotor1");
+        armMotor2= hardwareMap.get(DcMotor.class, "armmotor2");
+
         intakeServo = hardwareMap.get(Servo.class, "Intake");
 
         leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
     public void drive(int leftBackTicks, int rightBackTicks, int leftFrontTicks, int rightFrontTicks) {
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
@@ -73,8 +70,8 @@ public class IgorRoadrunner extends LinearOpMode{
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(leftBack.isBusy() && rightBack.isBusy() && leftFront.isBusy() && rightFront.isBusy()) {
-            idle();
+        while(leftBack.isBusy() || rightBack.isBusy() || leftFront.isBusy() || rightFront.isBusy()) {
+            opmode.idle();
         }
     }
     public void driveLeft(int Ticks) {
@@ -92,14 +89,19 @@ public class IgorRoadrunner extends LinearOpMode{
     public void turnLeft (int degrees) {int Ticks = degrees * 70 / 6; drive(-Ticks, -Ticks, -Ticks, -Ticks); }
     public void turnRight (int degrees) {int Ticks = degrees * 70 / 6; drive (Ticks, Ticks, Ticks, Ticks); }
     public void armMovement(int armTicks) {
-        armMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        armMotor.setTargetPosition(armTicks);
-        armMotor.setPower(0.5);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor1.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        armMotor1.setTargetPosition(armTicks);
+        armMotor1.setPower(0.5);
+        armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor2.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        armMotor2.setTargetPosition(armTicks);
+        armMotor2.setPower(0.5);
+        armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (armMotor.isBusy()) {
-            idle();
+        while (armMotor1.isBusy()) {
+            opmode.idle();
         }
     }
 
@@ -116,64 +118,13 @@ public class IgorRoadrunner extends LinearOpMode{
         servoPositioning(0.3);
         armMovement(400);
         driveBackward(stack[stackNum][1]);
-        return armMotor.getCurrentPosition();
+        return armMotor1.getCurrentPosition();
     }
     public int armDrop (int junctionNum) {
-        int[] junction = {150, 1100, 2100, 3000};
+        int[] junction = {150, 800, 1300, 1800};
         armMovement(junction[junctionNum] - currentHeight);
-        driveForward(350);
-        armMovement(-400);
+//        armMovement(-400);
         servoPositioning(0.5);
-        driveBackward(380);
-        return armMotor.getCurrentPosition();
-    }
-
-    @Override
-    public  void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
-
-//        initAutonomous();
-        /*defaultFunctions = new DefaultFunctions();
-        defaultFunctions.initAutonomous(hardwareMap, this);
-        defaultFunctions.driveRight(7);
-        waitForStart();
-        servoPositioning(0.3);
-*/
-        /*
-        TrajectorySequence PreloadedConePlusFirstCone = drivetrain.trajectorySequenceBuilder(new Pose2d(36, -36, Math.toRadians(0)))
-                .lineTo(new Vector2d(36, 0))
-                .lineTo(new Vector2d(34, 0))
-                .waitSeconds(1)
-                .lineTo(new Vector2d(36, 0))
-                .lineTo(new Vector2d(36, -12))
-                .lineTo(new Vector2d(56, -12))
-                .waitSeconds(1)
-                .build();
-
-        TrajectorySequence ConeStack = drivetrain.trajectorySequenceBuilder(new Pose2d(56, -12, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(47.5, -12, Math.toRadians(270)))
-                .lineTo(new Vector2d(47.5, -14))
-                //.waitSeconds(1)
-                .lineTo(new Vector2d(47.5, -10))
-                .lineToLinearHeading(new Pose2d(56, -12, Math.toRadians(0)))
-                //.waitSeconds(1)
-                .build();
-
-        TrajectorySequence Park = drivetrain.trajectorySequenceBuilder(new Pose2d(0, -0, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(180)))
-                .build(); */
-
-        TrajectorySequence test = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(1, 0, Math.toRadians(90)))
-                .build();
-
-        TrajectorySequence turntest = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(48,0))
-                .lineTo(new Vector2d(24, 0))
-                .waitSeconds(5)
-                .lineTo(new Vector2d(0,0))
-                .build();
-
-        drivetrain.followTrajectorySequence(turntest);
+        return armMotor1.getCurrentPosition();
     }
 }
