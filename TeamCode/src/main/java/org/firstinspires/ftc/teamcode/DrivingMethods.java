@@ -33,20 +33,20 @@ public class DrivingMethods extends LinearOpMode {
         armMotor.setDirection(Direction.REVERSE);
     }
     public void drive(int leftBackTicks, int rightBackTicks, int leftFrontTicks, int rightFrontTicks) {
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftBack.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        rightBack.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        leftFront.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        rightFront.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftBack.setTargetPosition(leftBackTicks);
         rightBack.setTargetPosition(rightBackTicks);
@@ -82,8 +82,8 @@ public class DrivingMethods extends LinearOpMode {
     public void turnLeft (int Ticks) {drive(Ticks, Ticks, Ticks, Ticks); }
     public void turnRight (int Ticks) {drive (-Ticks, -Ticks, -Ticks, -Ticks); }
     public void armMovement(int armTicks) {
-        armMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setTargetPosition(armTicks);
         armMotor.setPower(0.5);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -94,41 +94,6 @@ public class DrivingMethods extends LinearOpMode {
     }
     public void servoPositioning(double servoPosition) {
         intakeServo.setPosition(servoPosition);
-    }
-    public void turnDegrees(int Ticks) {
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-
-        leftBack.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        rightBack.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        leftFront.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        rightFront.setMode(DcMotor.RunMode.RESET_ENCODERS);
-
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-
-        leftBack.setTargetPosition(Ticks);
-        rightBack.setTargetPosition(Ticks);
-        leftFront.setTargetPosition(Ticks);
-        rightFront.setTargetPosition(Ticks);
-
-        leftBack.setPower(Math.sin(-Math.PI/4)+1);
-        rightBack.setPower(Math.cos(-Math.PI/4)-1);
-        leftFront.setPower(Math.cos(-Math.PI/4)+1);
-        rightFront.setPower(Math.sin(-Math.PI/4)-1);
-
-        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while(leftBack.isBusy() && rightBack.isBusy() && leftFront.isBusy() && rightFront.isBusy()) {
-            idle();
-        }
     }
 
     @Override

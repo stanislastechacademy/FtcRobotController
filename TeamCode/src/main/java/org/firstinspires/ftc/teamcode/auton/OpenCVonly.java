@@ -23,8 +23,8 @@ package org.firstinspires.ftc.teamcode.auton;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -33,12 +33,12 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-@TeleOp
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+@Autonomous(name = "Park only", group = "Concept")
+public class OpenCVonly extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -57,26 +57,15 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
- // Tag ID 18 from the 36h11 family
+    // Tag ID 18 from the 36h11 family
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
 
     AprilTagDetection tagOfInterest = null;
-    private DcMotor leftBack;
-    private DcMotor leftFront;
-    private DcMotor rightBack;
-    private DcMotor rightFront;
-    private DcMotor armMotor;
-    private Servo intakeServo;
-
-
-
-
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException{
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -98,6 +87,9 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         });
 
         telemetry.setMsTransmissionInterval(50);
+
+        Unifiedmethods unifiedmethods = new Unifiedmethods();
+        unifiedmethods.initAutonomous(hardwareMap, this);
 
         /*
          * The INIT-loop:
@@ -179,15 +171,28 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-       }
+
+        unifiedmethods.driveForward(1600, 0.5);
+
+        if(tagOfInterest == null || tagOfInterest.id == LEFT){
+            telemetry.addLine("Going for left");
+            unifiedmethods.driveLeft(1600, 0.5);
+        }else if(tagOfInterest.id == MIDDLE){
+            telemetry.addLine("Going for centre");
+        }else if(tagOfInterest.id == RIGHT){
+            telemetry.addLine("Going for right");
+            unifiedmethods.driveRight(1600, 0.5);
+        }
+    }
+
     void tagToTelemetry(@NonNull AprilTagDetection detection)
     {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+        telemetry.addLine(String.format(Locale.ENGLISH,"\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format(Locale.ENGLISH,"Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+        telemetry.addLine(String.format(Locale.ENGLISH,"Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+        telemetry.addLine(String.format(Locale.ENGLISH,"Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format(Locale.ENGLISH,"Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+        telemetry.addLine(String.format(Locale.ENGLISH,"Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+        telemetry.addLine(String.format(Locale.ENGLISH,"Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
