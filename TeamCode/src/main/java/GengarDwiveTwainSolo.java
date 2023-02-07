@@ -79,7 +79,7 @@ public class GengarDwiveTwainSolo extends OpMode {
         double armPower;
 
         boolean sensitivity = gamepad1.right_bumper;
-        //boolean motorSensitivity = gamepad1.left_bumper;
+        //boolean motorSensitivity = pgamead1.left_bumper;
         
         double x = gamepad1.left_stick_x; // 1.5;
         double y = -gamepad1.left_stick_y; // 1.5;
