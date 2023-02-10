@@ -66,14 +66,14 @@ public class basicCode2player extends OpMode {
         double rightX = gamepad1.right_stick_x;
         double r = Math.hypot(x, y);
         double robotAngle = Math.atan2(y, x) - Math.PI / 4;
-        double leftTrigger = gamepad2.left_trigger;
-        double rightTrigger = gamepad2.right_trigger;
+        double leftTrigger = gamepad1.left_trigger;
+        double rightTrigger = gamepad1.right_trigger;
         boolean speed = gamepad1.left_stick_button;
 
-        if (gamepad2.dpad_down) {
+        if (gamepad1.dpad_up) {
             intakePosition = 0.3;
         }
-        if (gamepad2.dpad_up) {
+        if (gamepad1.dpad_down) {
             intakePosition = 0.5;
         }
 

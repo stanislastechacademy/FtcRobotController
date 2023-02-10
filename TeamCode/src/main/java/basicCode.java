@@ -20,7 +20,7 @@ public class basicCode extends OpMode {
     private Servo intake = null;
     double intakePosition = 0.5;
 
-    int upperLimit = 100;
+    int upperLimit = 1800;
     public void init() {
         telemetry.addData("Status", "Initialized");
 
@@ -100,13 +100,13 @@ public class basicCode extends OpMode {
             rightBackPower = (r * Math.cos(robotAngle) - rightX);
         }
 
-        if(gamepad1.x){
-            armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        if(gamepad1.x){
+//            armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//            armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
 
         armPower = rightTrigger - leftTrigger/* +baseLoad*/;
 
@@ -123,8 +123,6 @@ public class basicCode extends OpMode {
             armMotor1.setPower(0);
             armMotor2.setPower(0);
         }
-        armMotor1.setPower(armPower);
-        armMotor2.setPower(armPower);
 
         intake.setPosition(intakePosition);
 

@@ -107,31 +107,31 @@ public class OnePlusXTesting extends LinearOpMode {
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
 
         TrajectorySequence LeftPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, 24))
-                .lineTo(new Vector2d(36, 24))
+                .lineTo(new Vector2d(0, 6))
+                .lineTo(new Vector2d(26, 6))
+                .build();
+
+        TrajectorySequence MiddlePark = drivetrain.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
+                .lineTo(new Vector2d(4,0))
                 .build();
 
         TrajectorySequence RightPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, -16))
-                .lineTo(new Vector2d(36, -16))
-                .build();
-
-        TrajectorySequence MiddlePark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(36, 0))
+                .lineTo(new Vector2d(0, 6))
+                .lineTo(new Vector2d(-16, 6))
                 .build();
 
         TrajectorySequence FirstBloodPartOne = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, -3))
-                .lineTo(new Vector2d(26,-2))
-                .lineTo(new Vector2d(28, -8))
+                .lineTo(new Vector2d(0, -2.5))
+                .lineTo(new Vector2d(26,-2.5))
+                .lineTo(new Vector2d(26, -13))
                 .build();
 
         TrajectorySequence FirstBloodPartTwo = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(-5,0))
+                .lineTo(new Vector2d(-4,0))
                 .build();
 
         TrajectorySequence FirstBloodPartThree = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(3,0))
+                .lineTo(new Vector2d(5,0))
                 .build();
 
         TrajectorySequence AlmostMoreBlood = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
@@ -139,19 +139,30 @@ public class OnePlusXTesting extends LinearOpMode {
                 .build();
 
         TrajectorySequence MoreBloodPartOne = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0,10))
-                .lineTo(new Vector2d(27, 6))
-                .turn(Math.toRadians(95))
+                .lineTo(new Vector2d(0,11))
+                .lineTo(new Vector2d(26,7))
+                .turn(Math.toRadians(77))
                 .build();
 
         TrajectorySequence MoreBloodPartTwo = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(24,0))
+                .lineTo(new Vector2d(23,1.5))
+                .addDisplacementMarker(() -> {servoPositioning(0.3);})
+                .lineTo(new Vector2d(22,1.5))
+                .addDisplacementMarker(()  ->{
+                    try {
+                        armMovement(1400);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .lineTo(new Vector2d(20,1.5))
                 .build();
 
-        TrajectorySequence MoreBloodPartThree = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(-20,0))
-                .lineTo(new Vector2d(-20,8))
-                .lineTo(new Vector2d(-23, 8))
+        TrajectorySequence MoreBloodPartThree = drivetrain.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
+                .lineTo(new Vector2d(-17,0))
+                .lineTo(new Vector2d(-17,7.5))
+                .lineTo(new Vector2d(-21,7.5))
+                .turn(Math.toRadians(10))
                 .build();
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -257,30 +268,29 @@ public class OnePlusXTesting extends LinearOpMode {
 
         drivetrain.followTrajectorySequence(FirstBloodPartOne);
         drivetrain.followTrajectorySequence(FirstBloodPartTwo);
-//        armMovement(1600);
+        armMovement(1600);
         drivetrain.followTrajectorySequence(FirstBloodPartThree);
-//        armMovement(1250);
+        armMovement(1000);
         servoPositioning(0.5);
         drivetrain.followTrajectorySequence(AlmostMoreBlood);
-//        armMovement(100);
-//        armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMovement(1300);
         drivetrain.followTrajectorySequence(MoreBloodPartOne);
-        armMovement(625);
+        armMovement(500);
         drivetrain.followTrajectorySequence(MoreBloodPartTwo);
-        servoPositioning(0.3);
-        armMovement(1050);
         drivetrain.followTrajectorySequence(MoreBloodPartThree);
         armMovement(700);
         servoPositioning(0.5);
         armMovement(100);
 
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-
+            drivetrain.followTrajectorySequence(LeftPark);
+            telemetry.addLine(String.format(Locale.ENGLISH,"Going for the left!"));
         }else if(tagOfInterest.id == MIDDLE){
-
+            drivetrain.followTrajectorySequence(MiddlePark);
+            telemetry.addLine(String.format(Locale.ENGLISH,"Going for the middle!"));
         }else if(tagOfInterest.id == RIGHT){
-
+            drivetrain.followTrajectorySequence(RightPark);
+            telemetry.addLine(String.format(Locale.ENGLISH,"Going for the right!"));
         }
     }
 
