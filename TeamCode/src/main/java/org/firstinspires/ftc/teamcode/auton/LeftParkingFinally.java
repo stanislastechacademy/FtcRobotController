@@ -29,7 +29,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.DefaultFunctions;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
@@ -40,8 +39,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.Locale;
 
-@Autonomous(name = "LeftParkFinal", group = "Final")
-public class LeftParkingFinal extends LinearOpMode
+@Autonomous(name = "RightParkFinally", group = "Final")
+public class LeftParkingFinally extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -76,17 +75,17 @@ public class LeftParkingFinal extends LinearOpMode
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
 
         TrajectorySequence LeftPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, 21))
-                .lineTo(new Vector2d(36, 25))
+                .lineTo(new Vector2d(0, 16))
+                .lineTo(new Vector2d(36, 16))
                 .build();
 
         TrajectorySequence RightPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, -15))
-                .lineTo(new Vector2d(30, -14))
+                .lineTo(new Vector2d(0, -21))
+                .lineTo(new Vector2d(36, -21))
                 .build();
 
         TrajectorySequence MiddlePark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(36, 3))
+                .lineTo(new Vector2d(36, 0))
                 .build();
 
         camera.setPipeline(aprilTagDetectionPipeline);

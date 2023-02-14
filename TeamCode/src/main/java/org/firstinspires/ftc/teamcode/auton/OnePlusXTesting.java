@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -93,7 +94,7 @@ public class OnePlusXTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         armMotor1 = hardwareMap.get(DcMotor.class, "armmotor1");
-        armMotor2= hardwareMap.get(DcMotor.class, "armmotor2");
+        armMotor2 = hardwareMap.get(DcMotor.class, "armmotor2");
 
         intakeServo = hardwareMap.get(Servo.class, "Intake");
 
@@ -106,64 +107,84 @@ public class OnePlusXTesting extends LinearOpMode {
 
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
 
-        TrajectorySequence LeftPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, 6))
-                .lineTo(new Vector2d(26, 6))
-                .build();
-
-        TrajectorySequence MiddlePark = drivetrain.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .lineTo(new Vector2d(4,0))
-                .build();
-
-        TrajectorySequence RightPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, 6))
-                .lineTo(new Vector2d(-16, 6))
-                .build();
-
-        TrajectorySequence FirstBloodPartOne = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, -2.5))
-                .lineTo(new Vector2d(26,-2.5))
-                .lineTo(new Vector2d(26, -13))
-                .build();
-
-        TrajectorySequence FirstBloodPartTwo = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(-4,0))
-                .build();
-
-        TrajectorySequence FirstBloodPartThree = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(5,0))
-                .build();
-
-        TrajectorySequence AlmostMoreBlood = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(-3, 0))
-                .build();
-
-        TrajectorySequence MoreBloodPartOne = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0,11))
-                .lineTo(new Vector2d(26,7))
-                .turn(Math.toRadians(77))
-                .build();
-
-        TrajectorySequence MoreBloodPartTwo = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(23,1.5))
-                .addDisplacementMarker(() -> {servoPositioning(0.3);})
-                .lineTo(new Vector2d(22,1.5))
-                .addDisplacementMarker(()  ->{
-                    try {
-                        armMovement(1400);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .lineTo(new Vector2d(20,1.5))
-                .build();
-
-        TrajectorySequence MoreBloodPartThree = drivetrain.trajectorySequenceBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .lineTo(new Vector2d(-17,0))
-                .lineTo(new Vector2d(-17,7.5))
-                .lineTo(new Vector2d(-21,7.5))
-                .turn(Math.toRadians(10))
-                .build();
+//        Trajectory LeftPark1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(0, 6))
+//                .build();
+//
+//        Trajectory LeftPark2 = drivetrain.trajectoryBuilder(LeftPark1.end())
+//                .lineTo(new Vector2d(26, 6))
+//                .build();
+//
+//        Trajectory MiddlePark = drivetrain.trajectoryBuilder(new Pose2d(0,0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(4,0))
+//                .build();
+//
+//        Trajectory RightPark1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(0, 6))
+//                .build();
+//
+//        Trajectory RightPark2 = drivetrain.trajectoryBuilder(RightPark1.end())
+//                .lineTo(new Vector2d(-16, 6))
+//                .build();
+//
+//        Trajectory FirstBloodPartOne1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(0, -2.5))
+//                .build();
+//
+//        Trajectory FirstBloodPartOne2 = drivetrain.trajectoryBuilder(FirstBloodPartOne1.end())
+//                .lineTo(new Vector2d(26,-2.5))
+//                .build();
+//
+//        Trajectory FirstBloodPartOne3 = drivetrain.trajectoryBuilder(FirstBloodPartOne2.end())
+//                .lineTo(new Vector2d(26, -13))
+//                .build();
+//
+//        Trajectory FirstBloodPartTwo = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(-4,0))
+//                .build();
+//
+//        Trajectory FirstBloodPartThree = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(5,0))
+//                .build();
+//
+//        Trajectory AlmostMoreBlood = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(-3, 0))
+//                .build();
+//
+//        Trajectory MoreBloodPartOne1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(0,11))
+//                .build();
+//
+//        Trajectory MoreBloodPartOne2 = drivetrain.trajectoryBuilder(MoreBloodPartOne1.end())
+//                .lineTo(new Vector2d(26,7))
+//                .build();
+//
+//        TrajectorySequence MoreBloodPartTwo = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(23,1.5))
+//                .addDisplacementMarker(() -> {servoPositioning(0.3);})
+//                .lineTo(new Vector2d(22,1.5))
+//                .addDisplacementMarker(()  ->{
+//                    try {
+//                        armMovement(1400);
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                })
+//                .lineTo(new Vector2d(20,1.5))
+//                .turn(Math.toRadians(10))
+//                .build();
+//
+//        Trajectory MoreBloodPartThree1 = drivetrain.trajectoryBuilder(new Pose2d(0,0, Math.toRadians(0)))
+//                .lineTo(new Vector2d(-17,0))
+//                .build();
+//
+//        Trajectory MoreBloodPartThree2 = drivetrain.trajectoryBuilder(MoreBloodPartThree1.end())
+//                .lineTo(new Vector2d(-17,7.5))
+//                .build();
+//
+//        Trajectory MoreBloodPartThree3 = drivetrain.trajectoryBuilder(MoreBloodPartThree2.end())
+//                .lineTo(new Vector2d(-21,7.5))
+//                .build();
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -187,7 +208,6 @@ public class OnePlusXTesting extends LinearOpMode {
         armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
         while (!isStarted() && !isStopRequested())
         {
@@ -265,31 +285,138 @@ public class OnePlusXTesting extends LinearOpMode {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
+        Trajectory LeftPark1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(0, 6))
+                .build();
 
-        drivetrain.followTrajectorySequence(FirstBloodPartOne);
-        drivetrain.followTrajectorySequence(FirstBloodPartTwo);
-        armMovement(1600);
-        drivetrain.followTrajectorySequence(FirstBloodPartThree);
-        armMovement(1000);
-        servoPositioning(0.5);
-        drivetrain.followTrajectorySequence(AlmostMoreBlood);
-        armMovement(1300);
-        drivetrain.followTrajectorySequence(MoreBloodPartOne);
-        armMovement(500);
-        drivetrain.followTrajectorySequence(MoreBloodPartTwo);
-        drivetrain.followTrajectorySequence(MoreBloodPartThree);
-        armMovement(700);
-        servoPositioning(0.5);
-        armMovement(100);
+        Trajectory LeftPark2 = drivetrain.trajectoryBuilder(LeftPark1.end())
+                .lineTo(new Vector2d(26, 6))
+                .build();
+
+        Trajectory MiddlePark = drivetrain.trajectoryBuilder(new Pose2d(0,0, Math.toRadians(0)))
+                .lineTo(new Vector2d(4,0))
+                .build();
+
+        Trajectory RightPark1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(0, 6))
+                .build();
+
+        Trajectory RightPark2 = drivetrain.trajectoryBuilder(RightPark1.end())
+                .lineTo(new Vector2d(-16, 6))
+                .build();
+
+        Trajectory FirstBloodPartOne1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(0, -2.5))
+                .build();
+
+        Trajectory FirstBloodPartOne2 = drivetrain.trajectoryBuilder(FirstBloodPartOne1.end())
+                .lineTo(new Vector2d(26,-2.5))
+                .build();
+
+        Trajectory FirstBloodPartOne3 = drivetrain.trajectoryBuilder(FirstBloodPartOne2.end())
+                .lineTo(new Vector2d(26, -13))
+                .build();
+
+        Trajectory FirstBloodPartTwo = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(-4,0))
+                .build();
+
+        Trajectory FirstBloodPartThree = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(5,0))
+                .build();
+
+        Trajectory AlmostMoreBlood = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(-3, 0))
+                .build();
+
+        Trajectory MoreBloodPartOne1 = drivetrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(0,11))
+                .build();
+
+        Trajectory MoreBloodPartOne2 = drivetrain.trajectoryBuilder(MoreBloodPartOne1.end())
+                .lineTo(new Vector2d(26,7))
+                .build();
+
+        TrajectorySequence MoreBloodPartTwo = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(23,1.5))
+                .addDisplacementMarker(() -> {servoPositioning(0.3);})
+                .lineTo(new Vector2d(22,1.5))
+                .addDisplacementMarker(()  ->{
+                    try {
+                        armMovement(1400);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .lineTo(new Vector2d(20,1.5))
+                .turn(Math.toRadians(10))
+                .build();
+
+        Trajectory MoreBloodPartThree1 = drivetrain.trajectoryBuilder(new Pose2d(0,0, Math.toRadians(0)))
+                .lineTo(new Vector2d(-17,0))
+                .build();
+
+        Trajectory MoreBloodPartThree2 = drivetrain.trajectoryBuilder(MoreBloodPartThree1.end())
+                .lineTo(new Vector2d(-17,7.5))
+                .build();
+
+        Trajectory MoreBloodPartThree3 = drivetrain.trajectoryBuilder(MoreBloodPartThree2.end())
+                .lineTo(new Vector2d(-21,7.5))
+                .build();
+
+//        drivetrain.followTrajectory(FirstBloodPartOne1);
+//        drivetrain.followTrajectory(FirstBloodPartOne2);
+//        drivetrain.followTrajectory(FirstBloodPartOne3);
+//        drivetrain.followTrajectory(FirstBloodPartTwo);
+//        armMovement(1600);
+//        drivetrain.followTrajectory(FirstBloodPartThree);
+//        armMovement(1000);
+//        servoPositioning(0.5);
+//        drivetrain.followTrajectory(AlmostMoreBlood);
+//        armMovement(1300);
+//        drivetrain.followTrajectory(MoreBloodPartOne1);
+//        drivetrain.followTrajectory(MoreBloodPartOne2);
+//        drivetrain.turn(Math.toRadians(77));
+//        armMovement(500);
+//        drivetrain.followTrajectorySequence(MoreBloodPartTwo);
+//        drivetrain.followTrajectory(MoreBloodPartThree1);
+//        drivetrain.followTrajectory(MoreBloodPartThree2);
+//        drivetrain.followTrajectory(MoreBloodPartThree3);
+//        armMovement(700);
+//        servoPositioning(0.5);
+//        armMovement(100);
 
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            drivetrain.followTrajectorySequence(LeftPark);
+            drivetrain.followTrajectory(FirstBloodPartOne1);
+            drivetrain.followTrajectory(FirstBloodPartOne2);
+            drivetrain.followTrajectory(FirstBloodPartOne3);
+            drivetrain.followTrajectory(FirstBloodPartTwo);
+            armMovement(1600);
+            drivetrain.followTrajectory(FirstBloodPartThree);
+            armMovement(1000);
+            servoPositioning(0.5);
+            drivetrain.followTrajectory(AlmostMoreBlood);
+            armMovement(1300);
+            drivetrain.followTrajectory(MoreBloodPartOne1);
+            drivetrain.followTrajectory(MoreBloodPartOne2);
+            drivetrain.turn(Math.toRadians(77));
+            armMovement(500);
+            drivetrain.followTrajectorySequence(MoreBloodPartTwo);
+            drivetrain.followTrajectory(MoreBloodPartThree1);
+            drivetrain.followTrajectory(MoreBloodPartThree2);
+            drivetrain.followTrajectory(MoreBloodPartThree3);
+            armMovement(700);
+            servoPositioning(0.5);
+            armMovement(100);
+            drivetrain.followTrajectory(LeftPark1);
+            drivetrain.followTrajectory(LeftPark2);
             telemetry.addLine(String.format(Locale.ENGLISH,"Going for the left!"));
         }else if(tagOfInterest.id == MIDDLE){
-            drivetrain.followTrajectorySequence(MiddlePark);
+            drivetrain.followTrajectory(MiddlePark);
             telemetry.addLine(String.format(Locale.ENGLISH,"Going for the middle!"));
         }else if(tagOfInterest.id == RIGHT){
-            drivetrain.followTrajectorySequence(RightPark);
+            drivetrain.followTrajectory(RightPark1);
+            drivetrain.followTrajectory(RightPark2);
             telemetry.addLine(String.format(Locale.ENGLISH,"Going for the right!"));
         }
     }

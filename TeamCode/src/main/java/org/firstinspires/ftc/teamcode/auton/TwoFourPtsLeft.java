@@ -122,9 +122,9 @@ public class TwoFourPtsLeft extends LinearOpMode {
                 .build();
 
         TrajectorySequence FirstBloodPartOne = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, -3))
-                .lineTo(new Vector2d(26,-3))
-                .lineTo(new Vector2d(26, -11))
+                .lineTo(new Vector2d(0, -2.5))
+                .lineTo(new Vector2d(26,-2.5))
+                .lineTo(new Vector2d(26, -8.5))
                 .build();
 
         TrajectorySequence FirstBloodPartTwo = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
@@ -152,6 +152,7 @@ public class TwoFourPtsLeft extends LinearOpMode {
         });
 
         telemetry.setMsTransmissionInterval(50);
+        servoPositioning(0.3);
 
         while (!isStarted() && !isStopRequested())
         {
@@ -231,31 +232,31 @@ public class TwoFourPtsLeft extends LinearOpMode {
         }
 
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            servoPositioning(0.3);
             drivetrain.followTrajectorySequence(FirstBloodPartOne);
             drivetrain.followTrajectorySequence(FirstBloodPartTwo);
-            armMovement(1500);
+            armMovement(1600);
             drivetrain.followTrajectorySequence(FirstBloodPartThree);
-            armMovement(-150);
+            armMovement(-600);
             servoPositioning(0.5);
+            armMovement(300);
             drivetrain.followTrajectorySequence(LeftPark);
         }else if(tagOfInterest.id == MIDDLE){
-            servoPositioning(0.3);
             drivetrain.followTrajectorySequence(FirstBloodPartOne);
             drivetrain.followTrajectorySequence(FirstBloodPartTwo);
-            armMovement(1500);
+            armMovement(1600);
             drivetrain.followTrajectorySequence(FirstBloodPartThree);
-            armMovement(-150);
+            armMovement(-600);
             servoPositioning(0.5);
+            armMovement(300);
             drivetrain.followTrajectorySequence(MiddlePark);
         }else if(tagOfInterest.id == RIGHT){
-            servoPositioning(0.3);
             drivetrain.followTrajectorySequence(FirstBloodPartOne);
             drivetrain.followTrajectorySequence(FirstBloodPartTwo);
-            armMovement(1500);
+            armMovement(1600);
             drivetrain.followTrajectorySequence(FirstBloodPartThree);
-            armMovement(-150);
+            armMovement(-600);
             servoPositioning(0.5);
+            armMovement(300);
             drivetrain.followTrajectorySequence(RightPark);
         }
     }
