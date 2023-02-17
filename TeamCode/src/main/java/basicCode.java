@@ -20,7 +20,7 @@ public class basicCode extends OpMode {
     private Servo intake = null;
     double intakePosition = 0.5;
 
-    int upperLimit = 1800;
+    int upperLimit = 1700;
     public void init() {
         telemetry.addData("Status", "Initialized");
 

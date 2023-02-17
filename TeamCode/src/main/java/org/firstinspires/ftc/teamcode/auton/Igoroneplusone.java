@@ -27,6 +27,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.DefaultFunctions;
@@ -40,9 +43,28 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.Locale;
 
-@Autonomous(name = "LeftParkFinal", group = "Final")
-public class LeftParkingFinal extends LinearOpMode
-{
+@Autonomous(name = "Igor 1+1", group = "Final Autonomous")
+public class Igoroneplusone extends LinearOpMode {
+
+    private DcMotor armMotor1;
+    private DcMotor armMotor2;
+    private Servo intakeServo;
+
+    public void armMovement(int armTicks) throws InterruptedException {
+        armMotor1.setTargetPosition(armTicks);
+        armMotor2.setTargetPosition(armTicks);
+        armMotor1.setPower(0.5);
+        armMotor2.setPower(0.5);
+        armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (armMotor1.isBusy()) {
+        idle();
+    }
+}
+    public void servoPositioning(double servoPosition) {intakeServo.setPosition(servoPosition);}
+
+    private DefaultFunctions defaultFunctions;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -69,6 +91,14 @@ public class LeftParkingFinal extends LinearOpMode
 
     @Override
     public void runOpMode() throws InterruptedException{
+        armMotor1 = hardwareMap.get(DcMotor.class, "armmotor1");
+        armMotor2= hardwareMap.get(DcMotor.class, "armmotor2");
+
+        intakeServo = hardwareMap.get(Servo.class, "Intake");
+
+        armMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(TagSize, fx, fy, cx, cy);
@@ -76,17 +106,28 @@ public class LeftParkingFinal extends LinearOpMode
         SampleMecanumDrive drivetrain = new SampleMecanumDrive(hardwareMap);
 
         TrajectorySequence LeftPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, 21))
-                .lineTo(new Vector2d(36, 25))
+                .lineTo(new Vector2d(0, 32))
                 .build();
 
         TrajectorySequence RightPark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(0, -15))
-                .lineTo(new Vector2d(26, -14))
+                .lineTo(new Vector2d(0, -10))
                 .build();
 
         TrajectorySequence MiddlePark = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .lineTo(new Vector2d(26, 3))
+                .lineTo(new Vector2d(0, 12))
+                .build();
+
+        TrajectorySequence Forward = drivetrain.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(0, -2.5))
+                .lineTo(new Vector2d(26,-2.5))
+                .build();
+        TrajectorySequence turn = drivetrain.trajectorySequenceBuilder(Forward.end())
+                .turn(Math.toRadians(-30))
+                .lineTo(new Vector2d(31, -2.5))
+                .build();
+        TrajectorySequence afterFirstScore = drivetrain.trajectorySequenceBuilder(turn.end())
+                .lineTo(new Vector2d(26,-2.5))
+                .turn(Math.toRadians(32))
                 .build();
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -106,6 +147,17 @@ public class LeftParkingFinal extends LinearOpMode
         });
 
         telemetry.setMsTransmissionInterval(50);
+
+        servoPositioning(0.3);
+
+        armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         while (!isStarted() && !isStopRequested())
         {
@@ -184,15 +236,23 @@ public class LeftParkingFinal extends LinearOpMode
             telemetry.update();
         }
 
-        if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            telemetry.addLine("Going for left");
-            drivetrain.followTrajectorySequence(LeftPark);
+        drivetrain.followTrajectorySequence(Forward);
+        armMovement(1500);
+        drivetrain.followTrajectorySequence(turn);
+        armMovement(-400);
+        servoPositioning(0.5);
+        drivetrain.followTrajectorySequence(afterFirstScore);
+
+
+        if( tagOfInterest == null ||  tagOfInterest.id == LEFT){
+//            drivetrain.followTrajectorySequence(LeftPark);
+            telemetry.addLine(String.format(Locale.ENGLISH,"Going for the right!"));
         }else if(tagOfInterest.id == MIDDLE){
-            telemetry.addLine("Going for centre");
             drivetrain.followTrajectorySequence(MiddlePark);
+            telemetry.addLine(String.format(Locale.ENGLISH,"Going for the right!"));
         }else if(tagOfInterest.id == RIGHT){
-            telemetry.addLine("Going for right");
             drivetrain.followTrajectorySequence(RightPark);
+            telemetry.addLine(String.format(Locale.ENGLISH,"Going for the right!"));
         }
     }
 

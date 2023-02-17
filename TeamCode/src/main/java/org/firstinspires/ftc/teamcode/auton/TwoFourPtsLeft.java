@@ -63,9 +63,9 @@ public class TwoFourPtsLeft extends LinearOpMode {
         armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (armMotor1.isBusy()) {
-            idle();
-        }
+        idle();
     }
+}
     public void servoPositioning(double servoPosition) {intakeServo.setPosition(servoPosition);}
 
     private DefaultFunctions defaultFunctions;

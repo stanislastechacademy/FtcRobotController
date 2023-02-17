@@ -5,9 +5,27 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Basic af code 2 player", group="Gengar")
+import org.firstinspires.ftc.teamcode.auton.UnifiedMethods;
+
+@TeleOp(name="Basic af code 2 Player", group="Gengar")
 
 public class basicCode2player extends OpMode {
+//    public void armMovement(int armTicks) {
+//        armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        armMotor1.setTargetPosition(armTicks);
+//        armMotor1.setPower(0.5);
+//        armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        armMotor2.setTargetPosition(armTicks);
+//        armMotor2.setPower(0.5);
+//        armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        while (armMotor1.isBusy()) {
+//            idle();
+//        }
+//    }
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -20,7 +38,7 @@ public class basicCode2player extends OpMode {
     private Servo intake = null;
     double intakePosition = 0.5;
 
-    @Override
+    int upperLimit = 1700;
     public void init() {
         telemetry.addData("Status", "Initialized");
 
@@ -40,6 +58,15 @@ public class basicCode2player extends OpMode {
         armMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setDirection(Servo.Direction.FORWARD);
 
+        armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         telemetry.addData("Status", "Initialized");
     }
 
@@ -54,11 +81,13 @@ public class basicCode2player extends OpMode {
 
     @Override
     public void loop() {
+
         double leftFrontPower;
         double leftBackPower;
         double rightFrontPower;
         double rightBackPower;
         double armPower;
+        int armGoal;
 
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
@@ -66,22 +95,27 @@ public class basicCode2player extends OpMode {
         double rightX = gamepad1.right_stick_x;
         double r = Math.hypot(x, y);
         double robotAngle = Math.atan2(y, x) - Math.PI / 4;
-        double leftTrigger = gamepad1.left_trigger;
-        double rightTrigger = gamepad1.right_trigger;
+        double leftTrigger = gamepad2.left_trigger;
+        double rightTrigger = gamepad2.right_trigger;
         boolean speed = gamepad1.left_stick_button;
+        boolean ground = gamepad2.a;
+        boolean low = gamepad2.x;
+        boolean mid = gamepad2.y;
+        boolean high = gamepad2.b;
 
-        if (gamepad1.dpad_up) {
+
+        if (gamepad2.dpad_up) {
             intakePosition = 0.3;
         }
-        if (gamepad1.dpad_down) {
+        if (gamepad2.dpad_down) {
             intakePosition = 0.5;
         }
 
         if (speed){
-            leftFrontPower = (2 * (r * Math.cos(robotAngle) + rightX));
-            rightFrontPower = (2 * (r * Math.sin(robotAngle) - rightX));
-            leftBackPower = (2 * (r * Math.sin(robotAngle) + rightX));
-            rightBackPower = (2 * (r * Math.cos(robotAngle) - rightX));
+            leftFrontPower = (200 * (r * Math.cos(robotAngle) + rightX));
+            rightFrontPower = (200 * (r * Math.sin(robotAngle) - rightX));
+            leftBackPower = (200 * (r * Math.sin(robotAngle) + rightX));
+            rightBackPower = (200 * (r * Math.cos(robotAngle) - rightX));
         }
         else {
             leftFrontPower = (r * Math.cos(robotAngle) + rightX);
@@ -90,18 +124,40 @@ public class basicCode2player extends OpMode {
             rightBackPower = (r * Math.cos(robotAngle) - rightX);
         }
 
-        armPower = rightTrigger - leftTrigger;
+//        if(gamepad1.x){
+//            armMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            armMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//            armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
+
+        armPower = rightTrigger - leftTrigger/* +baseLoad*/;
 
         leftFront.setPower(leftFrontPower);
         rightFront.setPower(rightFrontPower);
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
-        armMotor1.setPower(armPower);
-        armMotor2.setPower(armPower);
+
+        if ((armMotor1.getCurrentPosition() < upperLimit && armPower > 0) || (armMotor1.getCurrentPosition() > 0 && armPower < 0))
+        {
+            armMotor1.setPower(armPower);
+            armMotor2.setPower(armPower);
+        } else {
+            armMotor1.setPower(0);
+            armMotor2.setPower(0);
+        }
+
+//        if(ground){armMovement(1699);}
+//        else if (low){armMovement(1300);}
+//        else if (mid){armMovement(800);}
+//        else if (high) {armMovement(0);}
+
         intake.setPosition(intakePosition);
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("LeftTrigger", leftTrigger);
+        telemetry.addData("armPos", armMotor1.getCurrentPosition());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
     }
 }
