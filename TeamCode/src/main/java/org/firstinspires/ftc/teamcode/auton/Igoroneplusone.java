@@ -43,7 +43,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.Locale;
 
-@Autonomous(name = "Igor 1+1", group = "Final Autonomous")
+@Autonomous(name = "Igor 1+1", group = "Concept")
 public class Igoroneplusone extends LinearOpMode {
 
     private DcMotor armMotor1;
@@ -51,14 +51,16 @@ public class Igoroneplusone extends LinearOpMode {
     private Servo intakeServo;
 
     public void armMovement(int armTicks) throws InterruptedException {
+        double multiplier = 0;
+        if(armTicks >= 0){multiplier = 1.0;}
         armMotor1.setTargetPosition(armTicks);
         armMotor2.setTargetPosition(armTicks);
-        armMotor1.setPower(0.5);
-        armMotor2.setPower(0.5);
+        armMotor1.setPower(0.5 * multiplier);
+        armMotor2.setPower(0.5 * multiplier);
         armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (armMotor1.isBusy()) {
+        while (armMotor1.isBusy() && opModeIsActive()) {
         idle();
     }
 }
@@ -121,13 +123,26 @@ public class Igoroneplusone extends LinearOpMode {
                 .lineTo(new Vector2d(0, -2.5))
                 .lineTo(new Vector2d(26,-2.5))
                 .build();
+
         TrajectorySequence turn = drivetrain.trajectorySequenceBuilder(Forward.end())
                 .turn(Math.toRadians(-30))
-                .lineTo(new Vector2d(31, -2.5))
+                .lineTo(new Vector2d(30, -2.5))
                 .build();
+
         TrajectorySequence afterFirstScore = drivetrain.trajectorySequenceBuilder(turn.end())
-                .lineTo(new Vector2d(26,-2.5))
-                .turn(Math.toRadians(32))
+                .lineTo(new Vector2d(27.5,-2.5))
+                .turn(Math.toRadians(125))
+                .lineTo(new Vector2d(44,2.5))
+                .build();
+
+        TrajectorySequence getSecond = drivetrain.trajectorySequenceBuilder(afterFirstScore.end())
+                .lineTo(new Vector2d(44,20.25))
+                .build();
+
+        TrajectorySequence dropSecond = drivetrain.trajectorySequenceBuilder(getSecond.end())
+                .lineTo(new Vector2d(44,12.5))
+                .turn(Math.toRadians(70))
+                .lineTo(new Vector2d(48, 12.5))
                 .build();
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -159,7 +174,7 @@ public class Igoroneplusone extends LinearOpMode {
         armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        while (!isStarted() && !isStopRequested())
+        while (opModeInInit())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -235,13 +250,22 @@ public class Igoroneplusone extends LinearOpMode {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-
+        waitForStart();
         drivetrain.followTrajectorySequence(Forward);
         armMovement(1500);
         drivetrain.followTrajectorySequence(turn);
-        armMovement(-400);
+        armMovement(1100);
         servoPositioning(0.5);
+        armMotor1.setPower(0.0);
+        armMotor2.setPower(0.0);
+        sleep(1000);
         drivetrain.followTrajectorySequence(afterFirstScore);
+        armMovement(500);
+        drivetrain.followTrajectorySequence(getSecond);
+        servoPositioning(0.3);
+        armMovement(1050);
+        drivetrain.followTrajectorySequence(dropSecond);
+        servoPositioning(0.5);
 
 
         if( tagOfInterest == null ||  tagOfInterest.id == LEFT){

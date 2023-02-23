@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode.auton;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 @Autonomous(name = "Right Cones and park encoder", group = "Concept")
+@Disabled
 public class RightWithCones extends LinearOpMode
 {
     OpenCvCamera camera;
